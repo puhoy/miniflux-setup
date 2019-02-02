@@ -1,19 +1,74 @@
 # miniflux setup
 
+my miniflux setup. 
+runs in docker compose, exposes port 8081, i use (non-docker) nginx as proxy.
 
 
-# backups
 
-### requirements
+## starting the service
 
+basically, just run `docker-compose up -d`
+
+
+## setup nginx
+
+```
+server {
+        listen 80;
+        listen [::]:80;
+
+        error_log    /var/log/nginx/DOMAIN.error.log;
+        rewrite_log on;
+
+        server_name DOMAIN;
+
+        include /etc/nginx/snippets/letsencrypt.conf;
+        return 301 https://DOMAIN$request_uri;
+}
+
+server {
+
+        rewrite_log on;
+
+        listen 443 ssl;
+        listen [::]:443 ssl;
+        server_name DOMAIN;
+
+        ssl_certificate /etc/letsencrypt/live/DOMAIN/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/DOMAIN/privkey.pem;
+
+
+        include /etc/nginx/snippets/letsencrypt.conf;
+
+        location / {
+                proxy_pass http://localhost:8081;
+        }
+}
+```
+
+
+## get a certificate
+
+todo.
+(get the command in certbot_setup.sh.template and customize to whatever you need)
+
+
+## set up automatic backups
+
+requirements:
 - restic
 - aws account
 
+steps:
+ 
 1. setup aws bucket and user as described here:
 
 https://medium.com/@denniswebb/fast-and-secure-backups-to-s3-with-restic-49fd07944304
 
-(basically, set up a user with this policy)
+tl;dr: 
+- set up a private bucket
+- set up a user with this policy (add you bucket_name!)
+
 ```
 {
     "Version": "2012-10-17",
@@ -39,7 +94,7 @@ https://medium.com/@denniswebb/fast-and-secure-backups-to-s3-with-restic-49fd079
 }
 ```
 
-2.
+2. restic setup
  
 - copy .restic.env.template to .restic.env and make your changes
 - `source .restic.env`
