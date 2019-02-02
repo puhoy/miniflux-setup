@@ -1,0 +1,20 @@
+version: '2'
+services:
+  miniflux:
+    image: miniflux/miniflux:latest
+    ports:
+      - "8081:8080"
+    environment:
+      - DATABASE_URL=postgres://miniflux:secret@db/miniflux?sslmode=disable
+    links:
+    - db:db
+    depends_on:
+    - db
+    restart: always
+
+  db:
+    image: postgres:10.1
+    environment:
+      - POSTGRES_USER=miniflux
+      - POSTGRES_PASSWORD=secret
+    restart: always

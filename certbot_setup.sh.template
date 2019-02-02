@@ -1,0 +1,4 @@
+#!/bin/bash
+
+certbot certonly --webroot --agree-tos --no-eff-email --email ADMIN_EMAIL -w /var/www/letsencrypt -d DOMAIN --post-hook 'service nginx restart' 
+
