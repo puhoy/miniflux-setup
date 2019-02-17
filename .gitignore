@@ -2,3 +2,4 @@ db_*.dump
 upgrade.log
 .restic.env
 certbot_setup.sh
+.idea
