@@ -36,7 +36,7 @@ IMAGE_AFTER_PULL=`docker image inspect miniflux/miniflux --format="{{.Config.Ima
 
 if [ "${IMAGE_BEFORE_PULL}" != "${IMAGE_AFTER_PULL}" ]; then
     # we need to update
-
+    echo "${IMAGE_BEFORE_PULL} != ${IMAGE_AFTER_PULL}"
     ## stop miniflux
     echo "stopping..."
     stop_and_flush
@@ -56,6 +56,7 @@ if [ "${IMAGE_BEFORE_PULL}" != "${IMAGE_AFTER_PULL}" ]; then
 
 else
     # nothing changed, just backup
+    echo "${IMAGE_BEFORE_PULL} == ${IMAGE_AFTER_PULL}"
     echo "backing up..."
     backup
 fi
